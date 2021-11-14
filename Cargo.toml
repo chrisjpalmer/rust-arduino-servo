@@ -1,0 +1,52 @@
+[package]
+name = "rust-arduino-blink"
+version = "0.1.0"
+edition = "2018"
+
+[profile.test]
+opt-level = "s"
+
+[profile.dev]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = 3
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "s"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+panic-halt = "0.2.0"
+ufmt = "0.1.0"
+# ufmt = { git = "https://github.com/Rahix/ufmt.git", rev = "12225dc1678e42fecb0e8635bf80f501e24817d9" }
+nb = "0.1.2"
+embedded-hal = "0.2.3"
+pwm-pca9685 = "0.3.1"
+avr-device = "0.3"
+ufmt_float = "0.1.0"
+half = { version = "1.8.2" } #features=["num-traits"] 
+# fixed = {version = "1.7.0", features=["num-traits"] } 
+# avr-hal-generic = "0.1.0"
+
+[dependencies.arduino-hal]
+git = "https://github.com/Rahix/avr-hal"
+rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
+features = ["arduino-uno"]
+
+[dependencies.avr-hal-generic]
+git = "https://github.com/Rahix/avr-hal"
+rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
+
+[dependencies.atmega-hal]
+git = "https://github.com/Rahix/avr-hal"
+rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
+# path = "./mcu/atmega-hal"
+# features = ["arduino-uno"]
+# Oct 30, 2021 commit of avr-hal
+

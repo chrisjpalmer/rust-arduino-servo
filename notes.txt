@@ -1,0 +1,20 @@
+https://dev.to/creativcoder/how-to-run-rust-on-arduino-uno-40c0
+https://github.com/osx-cross/homebrew-avr
+
+$ brew tap osx-cross/avr
+$ brew install avr-gcc
+brew install avrdude
+
+https://github.com/Rahix/avr-hal
+cargo +stable install ravedude
+
+In the end the key steps were:
+1. taking a look at avr-hal
+2. cloning it and running an example.
+3. installing ravedude with teh above command
+4. had to kind of pull stuff out of the top level Cargo.toml to do with profiles (without this I got some pretty random build errors)
+5. also had to kind of rebuild the cargo.toml that was in the arduino-uno examples folder
+6. needed to put in a rust-toolchain.toml to force the toolchain to a certain version (there is some bug I believe)
+7. needed to clone the avr-atmega328p.json for the avr-hal repo and create a .cargo/config.toml, that looked like the one in the examples folder
+8. bit of googling required to fix the rust-analyzer but followed some leads on this https://github.com/rust-analyzer/rust-analyzer/issues/3801
+in the end it was just about telling rust-analyzer what the target was.
