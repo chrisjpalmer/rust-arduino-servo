@@ -10,7 +10,7 @@ opt-level = "s"
 panic = "abort"
 codegen-units = 1
 lto = true
-opt-level = 3
+opt-level = "s"
 
 [profile.release]
 panic = "abort"
@@ -24,15 +24,10 @@ opt-level = "s"
 [dependencies]
 panic-halt = "0.2.0"
 ufmt = "0.1.0"
-# ufmt = { git = "https://github.com/Rahix/ufmt.git", rev = "12225dc1678e42fecb0e8635bf80f501e24817d9" }
 nb = "0.1.2"
 embedded-hal = "0.2.3"
 pwm-pca9685 = "0.3.1"
 avr-device = "0.3"
-ufmt_float = "0.1.0"
-half = { version = "1.8.2" } #features=["num-traits"] 
-# fixed = {version = "1.7.0", features=["num-traits"] } 
-# avr-hal-generic = "0.1.0"
 
 [dependencies.arduino-hal]
 git = "https://github.com/Rahix/avr-hal"

@@ -94,18 +94,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "half"
-version = "1.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eabb4a44450da02c90444cf74558da904edde8fb4e9035a9a6a4e15445af0bd7"
-
-[[package]]
-name = "micromath"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc4010833aea396656c2f91ee704d51a6f1329ec2ab56ffd00bfd56f7481ea94"
-
-[[package]]
 name = "nb"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -175,12 +163,10 @@ dependencies = [
  "avr-device",
  "avr-hal-generic",
  "embedded-hal",
- "half",
  "nb 0.1.3",
  "panic-halt",
  "pwm-pca9685",
  "ufmt",
- "ufmt_float",
 ]
 
 [[package]]
@@ -246,16 +232,6 @@ name = "ufmt-write"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e87a2ed6b42ec5e28cc3b94c09982969e9227600b2e3dcbc1db927a84c06bd69"
-
-[[package]]
-name = "ufmt_float"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a59f843b330b7315292f64f281ae53495687709b10782cbdfb9f309caea33ab6"
-dependencies = [
- "micromath",
- "ufmt",
-]
 
 [[package]]
 name = "unicode-xid"

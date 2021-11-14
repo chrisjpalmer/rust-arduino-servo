@@ -1,6 +1,4 @@
 [toolchain]
-# channel = "nightly"
-# channel = "nightly-2020-11-20"
 channel = "nightly-2021-01-07"
 components = [ "rust-src" ]
-# profile = "minimal"
+profile = "minimal"
