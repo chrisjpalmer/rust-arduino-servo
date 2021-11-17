@@ -1,4 +1,5 @@
 {
     "rust-analyzer.cargo.target": "avr-atmega328p.json",
-    "rust-analyzer.checkOnSave.allTargets": false
+    "rust-analyzer.checkOnSave.allTargets": false,
+    "rust-analyzer.diagnostics.disabled": ["unresolved-macro-call"]
 }
