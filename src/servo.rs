@@ -1,3 +1,5 @@
+use crate::map::map;
+
 pub struct Servo {
     tc1: avr_device::atmega328p::TC1,
 }
@@ -20,9 +22,9 @@ impl Servo {
         Servo{tc1}
     }
 
-    pub fn write_duty(&self, duty:u16) {
-        // let (_, duty) = map(angle, 0, 180, 100, 612);
-        self.tc1.ocr1a.write(|w| unsafe { w.bits(duty as u16) });
+    pub fn write_angle(&self, angle:u16) {
+        let duty = map(angle, 0, 180, 100, 612);
+        self.tc1.ocr1a.write(|w| unsafe { w.bits(duty) });
     }
 }
 

@@ -29,6 +29,12 @@ embedded-hal = "0.2.3"
 pwm-pca9685 = "0.3.1"
 avr-device = "0.3"
 
+[dependencies.fixed]
+git = "https://gitlab.com/tspiteri/fixed"
+rev = "0ff3872d769810b1eb4776d945ba1c09206e08f3"
+# version 1.9.0
+
+# Oct 30, 2021 commit of avr-hal
 [dependencies.arduino-hal]
 git = "https://github.com/Rahix/avr-hal"
 rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
@@ -41,7 +47,5 @@ rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
 [dependencies.atmega-hal]
 git = "https://github.com/Rahix/avr-hal"
 rev = "4b8a0572e5f6a6928b4ce30e110e5e7219a2a9b1"
-# path = "./mcu/atmega-hal"
-# features = ["arduino-uno"]
-# Oct 30, 2021 commit of avr-hal
+
 

@@ -1,9 +1,13 @@
 #![no_std]
 #![no_main]
 
+mod map;
 mod servo;
+use arduino_hal::prelude::*;
 use arduino_hal::delay_ms;
 use servo::Servo;
+use map::map;
+
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -18,15 +22,17 @@ fn main() -> ! {
 
     loop {
         let pot_value = pot.analog_read(&mut adc);
-        let angle = (pot_value * 35) / 200; // 180 / 1024 * 100 = ~17.5
-        let duty = (pot_value / 2) + 100;
+        let angle = map(pot_value, 0, 1024, 0, 180);
+        let duty = map(angle, 0, 180, 100, 612);
 
-        ufmt::uwriteln!(serial, "pot_value: {}, angle: {}, duty: {}", pot_value, angle, duty);
+        ufmt::uwriteln!(serial, "pot_value: {}, angle: {}, duty: {}", pot_value, angle, duty).void_unwrap();
         
-        servo.write_duty(duty);
+        servo.write_angle(angle);
         delay_ms(5);
     }
 }
+
+
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
@@ -43,7 +49,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
     let mut serial = arduino_hal::default_serial!(dp, pins, 57600);
 
     // Print out panic location
-    ufmt::uwriteln!(&mut serial, "Firmware panic!\r");
+    ufmt::uwriteln!(&mut serial, "Firmware panic!\r").void_unwrap();
     if let Some(loc) = info.location() {
         ufmt::uwriteln!(
             &mut serial,
@@ -51,7 +57,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
             loc.file(),
             loc.line(),
             loc.column(),
-        );
+        ).void_unwrap();
     }
 
     // Blink LED rapidly
