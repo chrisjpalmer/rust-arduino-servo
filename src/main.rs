@@ -22,12 +22,12 @@ fn main() -> ! {
 
     loop {
         let pot_value = pot.analog_read(&mut adc);
-        let angle = map(pot_value, 0, 1024, 0, 180);
-        let duty = map(angle, 0, 180, 100, 612);
+        let angle = map(U16(pot_value), U16(0), U16(1024), U16(0), U16(180));
+        let duty = map(angle, U16(0), U16(180), U16(100), U16(612));
 
         ufmt::uwriteln!(serial, "pot_value: {}, angle: {}, duty: {}", pot_value, angle, duty).void_unwrap();
         
-        servo.write_angle(angle);
+        servo.write_angle(angle.as_value());
         delay_ms(5);
     }
 }
