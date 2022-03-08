@@ -6,29 +6,35 @@ mod servo;
 use arduino_hal::prelude::*;
 use arduino_hal::delay_ms;
 use servo::Servo;
-use map::map;
+use map::{map, U16};
 
 
 #[arduino_hal::entry]
 fn main() -> ! {
+    // setup
     let dp = arduino_hal::Peripherals::take().unwrap();
     let pins = arduino_hal::pins!(dp);
     let mut serial = arduino_hal::default_serial!(dp, pins, 57600);
     let mut adc = arduino_hal::Adc::new(dp.ADC, Default::default());
-
     let pot = pins.a0.into_analog_input(&mut adc);
-
     let servo = Servo::new(pins.d9, dp.TC1);
 
+    // loop
+    let print_ms = 100;
+    let del_ms = 5;
+    let mut ms = 0;
     loop {
+        // read pot and write angle
         let pot_value = pot.analog_read(&mut adc);
         let angle = map(U16(pot_value), U16(0), U16(1024), U16(0), U16(180));
-        let duty = map(angle, U16(0), U16(180), U16(100), U16(612));
+        let duty = servo.write_angle(angle.as_value());
+        if ms >= print_ms {
+            ms = 0;
+            ufmt::uwrite!(serial, "\rpot_value: {}, angle: {}, duty: {}   ", pot_value, angle, duty).void_unwrap();
+        }
 
-        ufmt::uwriteln!(serial, "pot_value: {}, angle: {}, duty: {}", pot_value, angle, duty).void_unwrap();
-        
-        servo.write_angle(angle.as_value());
-        delay_ms(5);
+        delay_ms(del_ms);
+        ms += del_ms
     }
 }
 

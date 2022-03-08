@@ -76,7 +76,7 @@ impl uDisplay for U16 {
     where
         W: uWrite + ?Sized
     {
-        ufmt::uwriteln!(f, "{}", self.0)
+        ufmt::uwrite!(f, "{}", self.0)
     }
 }
 
