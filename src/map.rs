@@ -1,31 +1,39 @@
-use core::ops::{AddAssign, MulAssign, SubAssign, DivAssign, Sub, Mul};
+use core::ops::{AddAssign, MulAssign, SubAssign, Sub, Mul};
 use ufmt::{uWrite, uDisplay, Formatter};
 
-pub trait Mapable : AddAssign + MulAssign + SubAssign + Sub<Output = Self> + Mul<f32, Output = Self> + Into<f32> + Copy {}
+pub trait Mapable : AddAssign + MulAssign + SubAssign + Sub<Output = Self> + Mul<f32, Output = Self> + Into<f32> + Copy {
+    type PrimitiveType : Into<Self>;
+    fn as_primitive(&self) -> Self::PrimitiveType;
+}
 
-pub fn map<T>(input:T, input_low: T, input_high: T, output_low:T, output_high:T) -> T 
+pub fn map<T>(input:T::PrimitiveType, input_low: T::PrimitiveType, input_high: T::PrimitiveType, output_low:T::PrimitiveType, output_high:T::PrimitiveType) -> T::PrimitiveType 
 where T: Mapable {
-    let mut input = input;
-    let input_range = input_high - input_low;
-    let output_range = output_high - output_low;
+    let mut input:T = input.into();
+    let input_low:T = input_low.into();
+    let input_high:T = input_high.into();
+    let output_low:T = output_low.into();
+    let output_high:T = output_high.into();
+
+    let input_range:T = input_high - input_low;
+    let output_range:T = output_high - output_low;
 
     input -= input_low;
     let fraction = (input.into() as f32) / (input_range.into() as f32);
     
     let mut output:T = output_range * fraction;
     output += output_low;
-    output
+    output.as_primitive()
+}
+
+impl Into<U16> for u16 {
+    fn into(self) -> U16 {
+        U16(self)
+    }
 }
 
 //U16
 #[derive(Copy, Clone)]
 pub struct U16(pub u16);
-
-impl U16 {
-    pub fn as_value(&self) -> u16 {
-        self.0
-    }
-}
 
 impl AddAssign<Self> for U16 {
     fn add_assign(&mut self, rhs: Self) {
@@ -42,12 +50,6 @@ impl MulAssign<Self> for U16 {
 impl SubAssign<Self> for U16 {
     fn sub_assign(&mut self, rhs: Self) {
         self.0 -= rhs.0;
-    }
-}
-
-impl DivAssign<Self> for U16 {
-    fn div_assign(&mut self, rhs: Self) {
-        self.0 /= rhs.0;
     }
 }
 
@@ -80,4 +82,9 @@ impl uDisplay for U16 {
     }
 }
 
-impl Mapable for U16 {}
+impl Mapable for U16 {
+    type PrimitiveType = u16;
+    fn as_primitive(&self) -> u16 {
+        self.0
+    }
+}
