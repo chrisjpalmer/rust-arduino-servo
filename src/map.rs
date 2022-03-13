@@ -1,7 +1,7 @@
-use core::ops::{AddAssign, MulAssign, SubAssign, Sub, Mul};
+use core::ops::{AddAssign, MulAssign, SubAssign, Sub};
 use ufmt::{uWrite, uDisplay, Formatter};
 
-pub trait Mapable : AddAssign + MulAssign + SubAssign + Sub<Output = Self> + Mul<f32, Output = Self> + Into<f32> + Copy {
+pub trait Mapable : AddAssign + MulAssign + SubAssign + Sub<Output = Self> + Copy + Into<f32> + From<f32> {
     type PrimitiveType : Into<Self>;
     fn as_primitive(&self) -> Self::PrimitiveType;
 }
@@ -20,71 +20,87 @@ where T: Mapable {
     input -= input_low;
     let fraction = (input.into() as f32) / (input_range.into() as f32);
     
-    let mut output:T = output_range * fraction;
+    let mut output:T = From::from((output_range.into() as f32) * fraction);
     output += output_low;
     output.as_primitive()
 }
 
-impl Into<U16> for u16 {
-    fn into(self) -> U16 {
-        U16(self)
-    }
+
+macro_rules! implement_mappable {
+    ($mappable:ident, $prim:ty) => {
+        #[derive(Copy, Clone)]
+        pub struct $mappable(pub $prim);
+
+        impl Into<$mappable> for $prim {
+            fn into(self) -> $mappable {
+                $mappable(self)
+            }
+        }
+
+        impl AddAssign<Self> for $mappable {
+            fn add_assign(&mut self, rhs: Self) {
+                self.0 += rhs.0;
+            }
+        }
+        
+        impl MulAssign<Self> for $mappable {
+            fn mul_assign(&mut self, rhs: Self) {
+                self.0 *= rhs.0;
+            }
+        }
+        
+        impl SubAssign<Self> for $mappable {
+            fn sub_assign(&mut self, rhs: Self) {
+                self.0 -= rhs.0;
+            }
+        }
+        
+        impl Sub<Self> for $mappable {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self::Output {
+                $mappable(self.0 - rhs.0)
+            }
+        }
+        
+        impl Into<f32> for $mappable {
+            fn into(self) -> f32 {
+                self.0 as f32
+            }
+        }
+
+        impl From<f32> for $mappable {
+            fn from(v:f32) -> Self {
+                $mappable(v as $prim)
+            }
+        }
+        
+        impl uDisplay for $mappable {
+            fn fmt<W>(&self, f: &mut Formatter<'_, W>) -> Result<(), W::Error> 
+            where
+                W: uWrite + ?Sized
+            {
+                ufmt::uwrite!(f, "{}", self.0)
+            }
+        }
+        
+        impl Mapable for $mappable {
+            type PrimitiveType = $prim;
+            fn as_primitive(&self) -> $prim {
+                self.0
+            }
+        }
+
+    };
 }
 
-//U16
-#[derive(Copy, Clone)]
-pub struct U16(pub u16);
+implement_mappable!(U32, u32);
+implement_mappable!(U16, u16);
 
-impl AddAssign<Self> for U16 {
-    fn add_assign(&mut self, rhs: Self) {
-        self.0 += rhs.0;
-    }
-}
 
-impl MulAssign<Self> for U16 {
-    fn mul_assign(&mut self, rhs: Self) {
-        self.0 *= rhs.0;
-    }
-}
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_map() {
 
-impl SubAssign<Self> for U16 {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.0 -= rhs.0;
-    }
-}
-
-impl Sub<Self> for U16 {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self::Output {
-        U16(self.0 - rhs.0)
-    }
-}
-
-impl Mul<f32> for U16 {
-    type Output = Self;
-    fn mul(self, rhs: f32) -> Self::Output {
-        U16(((self.0 as f32) * rhs) as u16)
-    }
-}
-
-impl Into<f32> for U16 {
-    fn into(self) -> f32 {
-        self.0 as f32
-    }
-}
-
-impl uDisplay for U16 {
-    fn fmt<W>(&self, f: &mut Formatter<'_, W>) -> Result<(), W::Error> 
-    where
-        W: uWrite + ?Sized
-    {
-        ufmt::uwrite!(f, "{}", self.0)
-    }
-}
-
-impl Mapable for U16 {
-    type PrimitiveType = u16;
-    fn as_primitive(&self) -> u16 {
-        self.0
     }
 }
